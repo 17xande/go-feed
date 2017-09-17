@@ -1,0 +1,31 @@
+<!-- Based on following links:
+https://developers.google.com/search/docs/data-types/podcasts
+http://podcasts.apple.com/resources/spec/ApplePodcastsSpecUpdatesiOS11.pdf
+http://itunespartner.apple.com/en/podcasts/overview -->
+<?xml version="1.0" ecoding="utf8"?>
+<rss version="2.0"
+  xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Podcast Title</title>
+    <link>localhost/rss</link>
+    <googleplay:author>Alex</googleplay:author>
+    <itunes:author>Alex</itunes:author>
+    <googleplay:image href="localhost/image"></googleplay:image>
+    <itunes:image href="localhost/image"></itunes:image>
+    <googleplay:description>a podcast</googleplay:description>
+    <itunes:summary>a podcast</itunes:summary>
+    <language>en</language>
+    <googleplay:category text="Religion &amp; Spirituality" />
+    <itunes:category text="Religion &amp; Spirituality" />
+    <item>
+      <title>First</title>
+      <enclosure url="http://localhost/1.mp3" type="audio/mpeg" length="123456789" />
+      <googleplay:description>The first podcast</googleplay:description>
+      <itunes:summary>The first podcast</itunes:summary>
+      <description>The first podcast</description>
+      <pubDate>Wednesday, 04 Feb 2017 00:00:00 EST</pubDate>
+      <itunes:duration>1800</itunes:duration>
+    </item>
+  </channel>
+</rss>
