@@ -8,20 +8,35 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os/user"
 	"path/filepath"
+	txtTemplate "text/template"
 )
 
 type config struct {
-	Title     string
-	Link      string
-	Author    string
-	ImagePath string
+	Title       string
+	Link        string
+	Author      string
+	ImagePath   string
+	Description string
+	ItemsPath   string
 }
 
 func main() {
+	var conf config
 	addr := flag.String("addr", ":3000", "The address of the application")
 	debug := flag.Bool("debug", false, "get more logs")
-	var conf config
+	ip := flag.String("path", "", "The path where the files to be hosted are")
+	flag.Parse()
+
+	conf.ItemsPath = *ip
+	if conf.ItemsPath[:2] == "~/" {
+		u, err := user.Current()
+		if err != nil {
+			log.Println("error trying to get system user: ", err)
+		}
+		conf.ItemsPath = filepath.Join(u.HomeDir, conf.ItemsPath[2:])
+	}
 
 	if *debug {
 		log.Println("debug mode enabled")
@@ -38,6 +53,17 @@ func main() {
 	}
 
 	http.HandleFunc("/", handlerHome)
+	http.Handle("/podcasts/", http.StripPrefix("/podcasts/", http.FileServer(http.Dir(conf.ItemsPath))))
+	http.HandleFunc("/podcast", func(w http.ResponseWriter, r *http.Request) {
+		templ := txtTemplate.Must(txtTemplate.ParseFiles("web/templates/podcast.rss"))
+		data := map[string]interface{}{
+			"config": &conf,
+		}
+		err := templ.Execute(w, data)
+		if err != nil {
+			log.Println("templ.Execute: ", err)
+		}
+	})
 
 	log.Printf("Listening on port %s\n", *addr)
 	err = http.ListenAndServe(*addr, nil)
@@ -48,7 +74,10 @@ func main() {
 
 func handlerTemplate(filename string, w io.Writer, data map[string]interface{}) {
 	templ := template.Must(template.ParseFiles(filepath.Join("web/templates", filename)))
-	templ.Execute(w, data)
+	err := templ.Execute(w, data)
+	if err != nil {
+		log.Println("templ.Execute: ", err)
+	}
 }
 
 // Handles requests to the index page as well as any other requests

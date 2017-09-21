@@ -1,20 +1,16 @@
-<!-- Based on following links:
-https://developers.google.com/search/docs/data-types/podcasts
-http://podcasts.apple.com/resources/spec/ApplePodcastsSpecUpdatesiOS11.pdf
-http://itunespartner.apple.com/en/podcasts/overview -->
 <?xml version="1.0" ecoding="utf8"?>
 <rss version="2.0"
   xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
   xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
   <channel>
-    <title>Podcast Title</title>
-    <link>localhost/rss</link>
-    <googleplay:author>Alex</googleplay:author>
-    <itunes:author>Alex</itunes:author>
-    <googleplay:image href="localhost/image"></googleplay:image>
-    <itunes:image href="localhost/image"></itunes:image>
-    <googleplay:description>a podcast</googleplay:description>
-    <itunes:summary>a podcast</itunes:summary>
+    <title>{{.config.Title}}</title>
+    <link>{{.config.Link}}</link>
+    <googleplay:author>{{.config.Author}}</googleplay:author>
+    <itunes:author>{{.config.Author}}</itunes:author>
+    <googleplay:image href="{{.config.ImagePath}}"></googleplay:image>
+    <itunes:image href="{{.config.ImagePath}}"></itunes:image>
+    <googleplay:description>{{.config.Description}}</googleplay:description>
+    <itunes:summary>{{.config.Description}}</itunes:summary>
     <language>en</language>
     <googleplay:category text="Religion &amp; Spirituality" />
     <itunes:category text="Religion &amp; Spirituality" />
@@ -29,3 +25,7 @@ http://itunespartner.apple.com/en/podcasts/overview -->
     </item>
   </channel>
 </rss>
+<!-- Based on following links:
+https://developers.google.com/search/docs/data-types/podcasts
+http://podcasts.apple.com/resources/spec/ApplePodcastsSpecUpdatesiOS11.pdf
+http://itunespartner.apple.com/en/podcasts/overview -->
