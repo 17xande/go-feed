@@ -9,8 +9,11 @@ import (
 	"log"
 	"net/http"
 	"os/user"
+	"path"
 	"path/filepath"
+	"strings"
 	txtTemplate "text/template"
+	"time"
 )
 
 type config struct {
@@ -22,6 +25,15 @@ type config struct {
 	ItemsPath   string
 }
 
+type item struct {
+	Title       string
+	Enclosure   template.URL
+	Description string
+	PubDate     time.Time
+	Duration    time.Duration
+	Length      int64
+}
+
 func main() {
 	var conf config
 	addr := flag.String("addr", ":3000", "The address of the application")
@@ -30,7 +42,7 @@ func main() {
 	flag.Parse()
 
 	conf.ItemsPath = *ip
-	if conf.ItemsPath[:2] == "~/" {
+	if len(conf.ItemsPath) > 1 && conf.ItemsPath[:2] == "~/" {
 		u, err := user.Current()
 		if err != nil {
 			log.Println("error trying to get system user: ", err)
@@ -47,9 +59,46 @@ func main() {
 		log.Fatal("error reading config file: ", err)
 	}
 
+	if *debug {
+		log.Println("config file read")
+	}
+
 	err = json.Unmarshal(data, &conf)
 	if err != nil {
 		log.Fatal("error unmarshalling config file: ", err)
+	}
+
+	if *debug {
+		log.Println("config file unmarshalled")
+	}
+
+	// read items path to list available items.
+	if len(conf.ItemsPath) == 0 {
+		log.Fatal("no item path provided. exiting program")
+	}
+	files, err := ioutil.ReadDir(conf.ItemsPath)
+	if err != nil {
+		log.Fatal("error trying to read items path of : ", conf.ItemsPath, err)
+	}
+
+	var items []item
+	// filter out all files except for .mp3 and create items
+	for _, file := range files {
+		e := strings.Replace(file.Name(), " ", "%20", -1)
+		if path.Ext(file.Name()) == ".mp3" {
+			i := item{
+				Title:       file.Name(),
+				Enclosure:   template.URL("/podcasts/" + e),
+				Description: "An item.",
+				PubDate:     file.ModTime(),
+				Length:      file.Size(),
+			}
+			items = append(items, i)
+		}
+	}
+
+	if *debug {
+		log.Println(len(items), " items read from directory")
 	}
 
 	http.HandleFunc("/", handlerHome)
@@ -58,6 +107,8 @@ func main() {
 		templ := txtTemplate.Must(txtTemplate.ParseFiles("web/templates/podcast.rss"))
 		data := map[string]interface{}{
 			"config": &conf,
+			"items":  items,
+			"host":   r.Host,
 		}
 		err := templ.Execute(w, data)
 		if err != nil {

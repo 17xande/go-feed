@@ -1,4 +1,4 @@
-<?xml version="1.0" ecoding="utf8"?>
+<?xml version="1.0" encoding="utf8" ?>
 <rss version="2.0"
   xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
   xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
@@ -14,15 +14,17 @@
     <language>en</language>
     <googleplay:category text="Religion &amp; Spirituality" />
     <itunes:category text="Religion &amp; Spirituality" />
+    {{range .items}}
     <item>
-      <title>First</title>
-      <enclosure url="http://localhost/1.mp3" type="audio/mpeg" length="123456789" />
-      <googleplay:description>The first podcast</googleplay:description>
-      <itunes:summary>The first podcast</itunes:summary>
-      <description>The first podcast</description>
-      <pubDate>Wednesday, 04 Feb 2017 00:00:00 EST</pubDate>
-      <itunes:duration>1800</itunes:duration>
+      <title>{{.Title}}</title>
+      <enclosure url="{{$.host}}{{.Enclosure}}" type="audio/mpeg" length="{{.Length}}" />
+      <googleplay:description>{{.Description}}</googleplay:description>
+      <itunes:summary>{{.Description}}</itunes:summary>
+      <description>{{.Description}}</description>
+      <pubDate>{{.PubDate}}</pubDate>
+      <!-- <itunes:duration>{{.Duration}}</itunes:duration> -->
     </item>
+    {{end}}
   </channel>
 </rss>
 <!-- Based on following links:
