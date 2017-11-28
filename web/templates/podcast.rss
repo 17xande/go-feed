@@ -1,30 +1,36 @@
-<?xml version="1.0" encoding="utf8" ?>
-<rss version="2.0"
-  xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
-  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
+    <atom:link href="http://{{.host}}/podcast" rel="self" type="application/rss+xml" />
     <title>{{.config.Title}}</title>
-    <link>{{.config.Link}}</link>
-    <googleplay:author>{{.config.Author}}</googleplay:author>
-    <itunes:author>{{.config.Author}}</itunes:author>
-    <googleplay:image href="{{.config.ImagePath}}"></googleplay:image>
-    <itunes:image href="{{.config.ImagePath}}"></itunes:image>
-    <googleplay:description>{{.config.Description}}</googleplay:description>
+    <link>http://{{.host}}/</link>
+    <itunes:type>{{.config.Type}}</itunes:type>
+    <description>{{.config.Description}}</description>
+    <!-- <googleplay:description>{{.config.Description}}</googleplay:description> -->
     <itunes:summary>{{.config.Description}}</itunes:summary>
+    <!-- <googleplay:author>{{.config.Author}}</googleplay:author> -->
+    <itunes:author>{{.config.Author}}</itunes:author>
+    <!-- <googleplay:image href="{{.config.ImagePath}}"></googleplay:image> -->
+    <itunes:image href="http://{{.host}}{{.config.ImagePath}}"></itunes:image>
     <language>en</language>
-    <googleplay:category text="Religion &amp; Spirituality" />
+    <!-- <googleplay:category text="Religion &amp; Spirituality" /> -->
     <itunes:category text="Religion &amp; Spirituality" />
+    <itunes:explicit>No</itunes:explicit>
     {{range .items}}
     <item>
       <title>{{.Title}}</title>
-      <enclosure url="{{$.host}}{{.Enclosure}}" type="audio/mpeg" length="{{.Length}}" />
-      <googleplay:description>{{.Description}}</googleplay:description>
+      <enclosure url="http://{{$.host}}{{.Enclosure}}" type="audio/mp3" length="{{.Length}}" />
+      <!-- <googleplay:description>{{.Description}}</googleplay:description> -->
       <itunes:summary>{{.Description}}</itunes:summary>
       <description>{{.Description}}</description>
       <pubDate>{{.PubDate}}</pubDate>
       <!-- <itunes:duration>{{.Duration}}</itunes:duration> -->
     </item>
     {{end}}
+    <itunes:owner>
+      <itunes:name>{{.config.OwnerName}}</itunes:name>
+      <itunes:email>{{.config.OwnerEmail}}</itunes:email>
+    </itunes:owner>
   </channel>
 </rss>
 <!-- Based on following links:

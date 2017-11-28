@@ -1,7 +1,9 @@
 {
   "title": "Alex's Private Podcast",
-  "link": "http://localhost:3000",
   "author": "Alexandre Figueiredo",
-  "imagePath": "http://localhost:3000/assets/img/podcast.jpeg",
-  "description": "Random assortment of messages for the Alex."
+  "type": "serial",
+  "imagePath": "/web/img/icon.png",
+  "description": "Random assortment of messages for the Alex.",
+  "ownerName": "Alexandre Figueiredo",
+  "ownerEmail": "17xande@gmail.com"
 }

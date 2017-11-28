@@ -20,16 +20,20 @@ type config struct {
 	Title       string
 	Link        string
 	Author      string
+	Type        string
 	ImagePath   string
 	Description string
 	ItemsPath   string
+	OwnerName   string
+	OwnerEmail  string
 }
 
 type item struct {
 	Title       string
 	Enclosure   template.URL
 	Description string
-	PubDate     time.Time
+	Episode     int
+	PubDate     string
 	Duration    time.Duration
 	Length      int64
 }
@@ -90,7 +94,7 @@ func main() {
 				Title:       file.Name(),
 				Enclosure:   template.URL("/podcasts/" + e),
 				Description: "An item.",
-				PubDate:     file.ModTime(),
+				PubDate:     file.ModTime().Format(time.RFC1123Z),
 				Length:      file.Size(),
 			}
 			items = append(items, i)
@@ -103,6 +107,7 @@ func main() {
 
 	http.HandleFunc("/", handlerHome)
 	http.Handle("/podcasts/", http.StripPrefix("/podcasts/", http.FileServer(http.Dir(conf.ItemsPath))))
+	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("./web"))))
 	http.HandleFunc("/podcast", func(w http.ResponseWriter, r *http.Request) {
 		templ := txtTemplate.Must(txtTemplate.ParseFiles("web/templates/podcast.rss"))
 		data := map[string]interface{}{
