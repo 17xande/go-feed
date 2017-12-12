@@ -30,8 +30,9 @@ type config struct {
 
 type item struct {
 	Title       string
-	Enclosure   template.URL
+	Link        template.URL
 	Description string
+	Author      string
 	Episode     int
 	PubDate     string
 	Duration    time.Duration
@@ -88,11 +89,12 @@ func main() {
 	var items []item
 	// filter out all files except for .mp3 and create items
 	for _, file := range files {
-		e := strings.Replace(file.Name(), " ", "%20", -1)
+		// mp3File, err := id3.Open(filepath.Join(addr, *n))
+		l := strings.Replace(file.Name(), " ", "%20", -1)
 		if path.Ext(file.Name()) == ".mp3" {
 			i := item{
 				Title:       file.Name(),
-				Enclosure:   template.URL("/podcasts/" + e),
+				Link:        template.URL("/podcasts/" + l),
 				Description: "An item.",
 				PubDate:     file.ModTime().Format(time.RFC1123Z),
 				Length:      file.Size(),

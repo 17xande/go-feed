@@ -19,7 +19,7 @@
     {{range .items}}
     <item>
       <title>{{.Title}}</title>
-      <enclosure url="http://{{$.host}}{{.Enclosure}}" type="audio/mp3" length="{{.Length}}" />
+      <enclosure url="http://{{$.host}}{{.Link}}" type="audio/mp3" length="{{.Length}}" />
       <!-- <googleplay:description>{{.Description}}</googleplay:description> -->
       <itunes:summary>{{.Description}}</itunes:summary>
       <description>{{.Description}}</description>
