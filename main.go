@@ -3,17 +3,21 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"html"
 	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"os/user"
 	"path"
 	"path/filepath"
 	"strings"
 	txtTemplate "text/template"
 	"time"
+
+	"github.com/dhowden/tag"
 )
 
 type config struct {
@@ -44,6 +48,7 @@ func main() {
 	addr := flag.String("addr", ":3000", "The address of the application")
 	debug := flag.Bool("debug", false, "get more logs")
 	ip := flag.String("path", "", "The path where the files to be hosted are")
+	pcName := flag.String("name", "", "The name of the podcast. Default value is \"Alex's Private Podcast\"")
 	flag.Parse()
 
 	conf.ItemsPath = *ip
@@ -77,6 +82,14 @@ func main() {
 		log.Println("config file unmarshalled")
 	}
 
+	// set the podcast title to the title supplied
+	// if no title supplied, set it to the folder name
+	if *pcName == "" {
+		conf.Title = path.Base(*ip)
+	} else {
+		conf.Title = *pcName
+	}
+
 	// read items path to list available items.
 	if len(conf.ItemsPath) == 0 {
 		log.Fatal("no item path provided. exiting program")
@@ -89,11 +102,23 @@ func main() {
 	var items []item
 	// filter out all files except for .mp3 and create items
 	for _, file := range files {
-		// mp3File, err := id3.Open(filepath.Join(addr, *n))
+		f, err := os.Open(filepath.Join(*ip, file.Name()))
+		defer f.Close()
+		if err != nil {
+			log.Println("Error trying to open file:", file.Name(), err)
+			continue
+		}
+
+		mp3File, err := tag.ReadFrom(f)
+		if err != nil {
+			log.Println("Error trying to read ID3 tag info:", file.Name(), err)
+			continue
+		}
+
 		l := strings.Replace(file.Name(), " ", "%20", -1)
 		if path.Ext(file.Name()) == ".mp3" {
 			i := item{
-				Title:       file.Name(),
+				Title:       html.EscapeString(mp3File.Title()),
 				Link:        template.URL("/podcasts/" + l),
 				Description: "An item.",
 				PubDate:     file.ModTime().Format(time.RFC1123Z),
