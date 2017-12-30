@@ -115,12 +115,13 @@ func main() {
 			continue
 		}
 
+		d := "Speaker: " + mp3File.Artist()
 		l := strings.Replace(file.Name(), " ", "%20", -1)
 		if path.Ext(file.Name()) == ".mp3" {
 			i := item{
 				Title:       html.EscapeString(mp3File.Title()),
 				Link:        template.URL("/podcasts/" + l),
-				Description: "An item.",
+				Description: html.EscapeString(d),
 				PubDate:     file.ModTime().Format(time.RFC1123Z),
 				Length:      file.Size(),
 			}
