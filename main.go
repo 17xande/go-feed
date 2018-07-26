@@ -3,21 +3,15 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"html"
 	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"os/user"
 	"path"
 	"path/filepath"
-	"strings"
 	txtTemplate "text/template"
-	"time"
-
-	"github.com/dhowden/tag"
 )
 
 type config struct {
@@ -30,17 +24,6 @@ type config struct {
 	ItemsPath   string
 	OwnerName   string
 	OwnerEmail  string
-}
-
-type item struct {
-	Title       string
-	Link        template.URL
-	Description string
-	Author      string
-	Episode     int
-	PubDate     string
-	Duration    time.Duration
-	Length      int64
 }
 
 func main() {
@@ -99,35 +82,7 @@ func main() {
 		log.Fatal("error trying to read items path of : ", conf.ItemsPath, err)
 	}
 
-	var items []item
-	// filter out all files except for .mp3 and create items
-	for _, file := range files {
-		f, err := os.Open(filepath.Join(*ip, file.Name()))
-		defer f.Close()
-		if err != nil {
-			log.Println("Error trying to open file:", file.Name(), err)
-			continue
-		}
-
-		mp3File, err := tag.ReadFrom(f)
-		if err != nil {
-			log.Println("Error trying to read ID3 tag info:", file.Name(), err)
-			continue
-		}
-
-		d := "Speaker: " + mp3File.Artist()
-		l := strings.Replace(file.Name(), " ", "%20", -1)
-		if path.Ext(file.Name()) == ".mp3" {
-			i := item{
-				Title:       html.EscapeString(mp3File.Title()),
-				Link:        template.URL("/podcasts/" + l),
-				Description: html.EscapeString(d),
-				PubDate:     file.ModTime().Format(time.RFC1123Z),
-				Length:      file.Size(),
-			}
-			items = append(items, i)
-		}
-	}
+	items := genItems(files, *ip)
 
 	if *debug {
 		log.Println(len(items), " items read from directory")
@@ -136,7 +91,17 @@ func main() {
 	http.HandleFunc("/", handlerHome)
 	http.Handle("/podcasts/", http.StripPrefix("/podcasts/", http.FileServer(http.Dir(conf.ItemsPath))))
 	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("./web"))))
-	http.HandleFunc("/podcast", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/podcast", handlePodcast(conf, items))
+
+	log.Printf("Listening on port %s\n", *addr)
+	err = http.ListenAndServe(*addr, nil)
+	if err != nil {
+		log.Fatal("could not start web server: ", err)
+	}
+}
+
+func handlePodcast(conf config, items []item) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		templ := txtTemplate.Must(txtTemplate.ParseFiles("web/templates/podcast.rss"))
 		data := map[string]interface{}{
 			"config": &conf,
@@ -147,12 +112,6 @@ func main() {
 		if err != nil {
 			log.Println("templ.Execute: ", err)
 		}
-	})
-
-	log.Printf("Listening on port %s\n", *addr)
-	err = http.ListenAndServe(*addr, nil)
-	if err != nil {
-		log.Fatal("could not start web server: ", err)
 	}
 }
 
