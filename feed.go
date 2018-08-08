@@ -53,8 +53,13 @@ func genItems(files []os.FileInfo, dir string) (items []item) {
 		buf := new(bytes.Buffer)
 		xml.EscapeText(buf, []byte(l))
 
+		title := html.EscapeString(mp3File.Title())
+		if title == "" {
+			title = path.Base(file.Name())
+		}
+
 		i := item{
-			Title:       html.EscapeString(mp3File.Title()),
+			Title:       title,
 			Link:        template.URL("/podcasts/" + buf.String()),
 			Description: html.EscapeString(d),
 			PubDate:     file.ModTime().Format(time.RFC1123Z),

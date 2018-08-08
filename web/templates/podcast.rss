@@ -4,7 +4,7 @@
     <atom:link href="http://{{.host}}/podcast" rel="self" type="application/rss+xml" />
     <title>{{.config.Title}}</title>
     <link>http://{{.host}}/</link>
-    <itunes:type>{{.config.Type}}</itunes:type>
+    <!-- <itunes:type>{{.config.Type}}</itunes:type> -->
     <description>{{.config.Description}}</description>
     <!-- <googleplay:description>{{.config.Description}}</googleplay:description> -->
     <itunes:summary>{{.config.Description}}</itunes:summary>

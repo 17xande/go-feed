@@ -91,7 +91,7 @@ func main() {
 	http.HandleFunc("/", handlerHome)
 	http.Handle("/podcasts/", http.StripPrefix("/podcasts/", http.FileServer(http.Dir(conf.ItemsPath))))
 	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("./web"))))
-	http.HandleFunc("/podcast", handlePodcast(conf, items))
+	http.HandleFunc("/podcast.rss", handlePodcast(conf, items))
 
 	log.Printf("Listening on port %s\n", *addr)
 	err = http.ListenAndServe(*addr, nil)
