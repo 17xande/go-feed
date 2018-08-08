@@ -1,13 +1,15 @@
 package main
 
 import (
+	"bytes"
+	"encoding/xml"
 	"html"
 	"html/template"
 	"log"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/dhowden/tag"
@@ -47,11 +49,13 @@ func genItems(files []os.FileInfo, dir string) (items []item) {
 		}
 
 		d := "Speaker: " + mp3File.Artist()
-		l := strings.Replace(file.Name(), " ", "%20", -1)
+		l := url.PathEscape(file.Name())
+		buf := new(bytes.Buffer)
+		xml.EscapeText(buf, []byte(l))
 
 		i := item{
 			Title:       html.EscapeString(mp3File.Title()),
-			Link:        template.URL("/podcasts/" + l),
+			Link:        template.URL("/podcasts/" + buf.String()),
 			Description: html.EscapeString(d),
 			PubDate:     file.ModTime().Format(time.RFC1123Z),
 			Length:      file.Size(),
