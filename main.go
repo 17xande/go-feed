@@ -137,5 +137,8 @@ func handlerHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	handlerTemplate("index.html", w, nil)
+	data := map[string]interface{}{
+		"host": r.Host,
+	}
+	handlerTemplate("index.html", w, data)
 }

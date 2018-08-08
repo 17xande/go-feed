@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>The Podcast</title>
-  <link rel="alternate" type="application/rss+xml" title="Podcast" href="http://localhost/podcast/rss/podcast.rss">
+  <link rel="alternate" type="application/rss+xml" title="Podcast" href="http://localhost/podcast">
 </head>
 <body>
   <h1>The podcast</h1>
-  <p>The actual podcast</p>
+  <a href="pcast://{{ .host }}/podcast">pcast</a>
+  <br>
+  <a href="feed://{{ .host }}/podcast">feed</a>
 </body>
 </html>
