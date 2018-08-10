@@ -12,6 +12,7 @@ import (
 	"path"
 	"path/filepath"
 	txtTemplate "text/template"
+	"time"
 )
 
 type config struct {
@@ -24,6 +25,7 @@ type config struct {
 	ItemsPath   string
 	OwnerName   string
 	OwnerEmail  string
+	PubDate     string
 }
 
 func main() {
@@ -72,6 +74,8 @@ func main() {
 	} else {
 		conf.Title = *pcName
 	}
+
+	conf.PubDate = time.Now().Format(time.RFC1123Z)
 
 	// read items path to list available items.
 	if len(conf.ItemsPath) == 0 {

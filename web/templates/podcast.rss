@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <atom:link href="http://{{.host}}/podcast" rel="self" type="application/rss+xml" />
+    <atom:link href="http://{{.host}}/podcast.rss" rel="self" type="application/rss+xml" />
     <title>{{.config.Title}}</title>
     <link>http://{{.host}}/</link>
+    <language>en</language>
+    <pubDate>{{.config.PubDate}}</pubDate>
+    <lastBuildDate>{{.config.PubDate}}</lastBuildDate>
+    <generator>go-feed</generator>
     <!-- <itunes:type>{{.config.Type}}</itunes:type> -->
     <description>{{.config.Description}}</description>
     <!-- <googleplay:description>{{.config.Description}}</googleplay:description> -->
     <itunes:summary>{{.config.Description}}</itunes:summary>
     <!-- <googleplay:author>{{.config.Author}}</googleplay:author> -->
     <itunes:author>{{.config.Author}}</itunes:author>
+    <managingEditor>{{.config.OwnerEmail}} ({{ .config.OwnerName}})</managingEditor>
+    <webMaster>{{.config.OwnerEmail}} ({{ .config.OwnerName}})</webMaster>
     <!-- <googleplay:image href="{{.config.ImagePath}}"></googleplay:image> -->
     <itunes:image href="http://{{.host}}{{.config.ImagePath}}"></itunes:image>
-    <language>en</language>
     <!-- <googleplay:category text="Religion &amp; Spirituality" /> -->
     <itunes:category text="Religion &amp; Spirituality" />
     <itunes:explicit>No</itunes:explicit>
@@ -24,6 +29,7 @@
       <itunes:summary>{{.Description}}</itunes:summary>
       <description>{{.Description}}</description>
       <pubDate>{{.PubDate}}</pubDate>
+      <guid>http://{{$.host}}{{.Link}}</guid>
       <!-- <itunes:duration>{{.Duration}}</itunes:duration> -->
     </item>
     {{end}}
